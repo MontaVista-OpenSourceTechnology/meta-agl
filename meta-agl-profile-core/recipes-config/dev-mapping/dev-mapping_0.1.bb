@@ -17,4 +17,6 @@ do_install() {
     install -m 0644 ${WORKDIR}/socketcan-slcan0.service.default ${D}${sysconfdir}/systemd/system/socketcan-slcan0.service
 }
 
+FILES_${PN} += "${systemd_system_unitdir}"
+
 RPROVIDES_${PN} = "virtual/low-can-dev-mapping"
