@@ -11,8 +11,10 @@ SRC_URI += "file://dev-mapping.conf.default"
 inherit allarch
 
 do_install() {
+
     install -d ${D}${sysconfdir}
     install -m 0644 ${WORKDIR}/dev-mapping.conf.default ${D}${sysconfdir}/dev-mapping.conf
+    install -m 0644 ${WORKDIR}/socketcan-slcan0.service.default ${D}${sysconfdir}/systemd/system/socketcan-slcan0.service
 }
 
 RPROVIDES_${PN} = "virtual/low-can-dev-mapping"

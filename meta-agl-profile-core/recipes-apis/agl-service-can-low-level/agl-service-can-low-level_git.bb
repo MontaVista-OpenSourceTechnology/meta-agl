@@ -17,3 +17,7 @@ DEPENDS = "libafb-helpers libappcontroller"
 inherit cmake aglwgt pkgconfig ptest
 
 RDEPENDS_${PN} = "virtual/low-can-dev-mapping"
+
+
+
+
