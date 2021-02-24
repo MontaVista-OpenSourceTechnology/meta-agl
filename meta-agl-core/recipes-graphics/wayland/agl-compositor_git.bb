@@ -12,7 +12,9 @@ DEPENDS = "wayland wayland-protocols wayland-native weston \
 	   ${@bb.utils.contains('AGL_FEATURES', 'waltham-remoting', 'waltham waltham-transmitter-plugin', '', d)}"
 
 SRC_URI = "git://gerrit.automotivelinux.org/gerrit/src/agl-compositor.git;protocol=https;branch=${AGL_BRANCH}"
+AGL_BRANCH_aglnext = "next"
 SRCREV = "68d184f9d541a475e15727d71f49b6df6799a054"
+SRCREV_aglnext = "${AUTOREV}"
 
 PV = "0.0.10+git${SRCPV}"
 S = "${WORKDIR}/git"
