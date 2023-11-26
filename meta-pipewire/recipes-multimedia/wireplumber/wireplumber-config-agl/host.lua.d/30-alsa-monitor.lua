@@ -78,6 +78,11 @@ alsa_monitor.rules = {
         { "node.name", "matches", "alsa_output.*" },
         { "api.alsa.pcm.name", "=", "bcm2835 ALSA" },
       },
+      {
+        -- nanopc-t6
+        { "node.name", "matches", "alsa_output.*" },
+        { "api.alsa.card.id", "=", "realtekrt5616co" },
+      },
     },
     apply_properties = {
       ["priority.driver"]        = 1100,
@@ -134,6 +139,11 @@ alsa_monitor.rules = {
         -- rcarsound
         { "node.name", "matches", "alsa_input.*" },
         { "api.alsa.card.id", "=", "rcarsound" },
+      },
+      {
+        -- nanopc-t6
+        { "node.name", "matches", "alsa_input.*" },
+        { "api.alsa.card.id", "=", "realtekrt5616co" },
       },
     },
     apply_properties = {
