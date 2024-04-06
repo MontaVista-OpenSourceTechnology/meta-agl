@@ -44,3 +44,5 @@ KERNEL_MODULE_AUTOLOAD += "hid-multitouch"
 PACKAGES += "kernel-module-snd-bcm2835"
 
 RDEPENDS:${PN} += "kernel-module-snd-bcm2835"
+
+RPI_KERNEL_DEVICETREE_OVERLAYS:append = " overlays/mcp251xfd.dtbo overlays/seeed-can-fd-hat-v1.dtbo overlays/seeed-can-fd-hat-v2.dtbo overlays/waveshare-can-fd-hat-mode-a.dtbo overlays/waveshare-can-fd-hat-mode-b.dtbo"

@@ -4,8 +4,15 @@ TOTAL_BOARD_MEM = "3072"
 do_deploy:append:raspberrypi4() {
     # ENABLE CAN
     if [ "${ENABLE_CAN}" = "1" ]; then
-        echo "# Enable CAN" >>${DEPLOYDIR}/bootfiles/config.txt
+        echo "# Enable CAN" >> ${DEPLOYDIR}/bootfiles/config.txt
         echo "dtoverlay=mcp2515-can0,oscillator=16000000,interrupt=25" >>${DEPLOYDIR}/bootfiles/config.txt
+    fi
+
+    # ENABLE DUAL CANFD
+    if [ "${ENABLE_DUAL_CAN_FD}" = "1" ]; then
+        echo "# Enable CANFD" >> ${DEPLOYDIR}/bootfiles/config.txt
+        echo "dtoverlay=mcp251xfd-can0,oscillator=16000000,interrupt=25" >> ${DEPLOYDIR}/bootfiles/config.txt
+        echo "dtoverlay=mcp251xfd-can1,oscillator=16000000,interrupt=24" >> ${DEPLOYDIR}/bootfiles/config.txt
     fi
 
     # Handle setup with armstub file
