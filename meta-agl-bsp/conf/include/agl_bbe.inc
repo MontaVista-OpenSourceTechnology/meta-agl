@@ -38,3 +38,12 @@ SECURITY_CFLAGS:pn-gpm = ""
 SECURITY_LDFLAGS:pn-gpm = ""
 SECURITY_CFLAGS:pn-libatasmart = ""
 SECURITY_LDFLAGS:pn-libatasmart = ""
+
+# DISABLE LTTNG-MODULES
+LTTNGMODULES:forcevariable = ""
+
+# imaging might fail on nonexistant package
+ALLOW_EMPTY_gdbserver = "1"
+
+# MOST DRIVERS are not compiling
+MOST_DRIVERS:bbe = ""

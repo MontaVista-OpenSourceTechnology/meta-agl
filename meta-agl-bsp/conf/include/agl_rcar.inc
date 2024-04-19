@@ -49,3 +49,9 @@ MACHINE_EXTRA_RRECOMMENDS:append:rcar-gen3 = " \
     kernel-module-vspm-if \
     omx-user-module \
 "
+
+# DISABLE LTTNG-MODULES
+LTTNGMODULES:forcevariable = ""
+
+# broken recipe
+BBMASK += "meta-rcar-gen3/recipes-connectivity/linuxptp/linuxptp_2.0.bbappend"
