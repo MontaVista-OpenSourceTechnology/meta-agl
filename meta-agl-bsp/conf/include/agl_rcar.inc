@@ -52,6 +52,8 @@ MACHINE_EXTRA_RRECOMMENDS:append:rcar-gen3 = " \
 
 # DISABLE LTTNG-MODULES
 LTTNGMODULES:forcevariable = ""
+LTTNGTOOLS:forcevariable = ""
+LTTNGUST:forcevariable = ""
 
 # broken recipe
 BBMASK += "meta-rcar-gen3/recipes-connectivity/linuxptp/linuxptp_2.0.bbappend"

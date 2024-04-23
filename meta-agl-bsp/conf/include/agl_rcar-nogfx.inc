@@ -48,6 +48,8 @@ BBMASK += "meta-rcar-gen3/recipes-core/base-files/ meta-rcar-gen3/recipes-core/s
 
 # DISABLE LTTNG-MODULES
 LTTNGMODULES:forcevariable = ""
+LTTNGTOOLS:forcevariable = ""
+LTTNGUST:forcevariable = ""
 
 # broken recipe
 BBMASK += "meta-rcar-gen3/recipes-connectivity/linuxptp/linuxptp_2.0.bbappend"
