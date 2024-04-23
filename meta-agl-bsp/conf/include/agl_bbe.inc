@@ -41,6 +41,8 @@ SECURITY_LDFLAGS:pn-libatasmart = ""
 
 # DISABLE LTTNG-MODULES
 LTTNGMODULES:forcevariable = ""
+LTTNGTOOLS:forcevariable = ""
+LTTNGUST:forcevariable = ""
 
 # imaging might fail on nonexistant package
 ALLOW_EMPTY_gdbserver = "1"

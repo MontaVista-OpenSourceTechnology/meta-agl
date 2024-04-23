@@ -45,3 +45,9 @@ PSEUDO_IGNORE_PATHS:append:pn-kernel-module-vspm = ",${KERNELSRC}"
 # Mask out base-files and systemd bbappends to avoid changing systemd-tmpfiles
 # behavior, see SPEC-4256 for a more involved explanation.
 BBMASK += "meta-rcar-gen3/recipes-core/base-files/ meta-rcar-gen3/recipes-core/systemd/"
+
+# DISABLE LTTNG-MODULES
+LTTNGMODULES:forcevariable = ""
+
+# broken recipe
+BBMASK += "meta-rcar-gen3/recipes-connectivity/linuxptp/linuxptp_2.0.bbappend"
