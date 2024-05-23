@@ -2,6 +2,9 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "file://gpsd.kingfisher"
 
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
+
 inherit update-alternatives
 
 do_configure[noexec] = "1"
@@ -9,7 +12,7 @@ do_compile[noexec] = "1"
 
 do_install() {
     install -d ${D}/${sysconfdir}/default
-    install -m 0644 ${WORKDIR}/gpsd.kingfisher ${D}/${sysconfdir}/default/gpsd.kingfisher
+    install -m 0644 ${UNPACKDIR}/gpsd.kingfisher ${D}/${sysconfdir}/default/gpsd.kingfisher
 }
 
 COMPATIBLE_MACHINE = "ulcb"
