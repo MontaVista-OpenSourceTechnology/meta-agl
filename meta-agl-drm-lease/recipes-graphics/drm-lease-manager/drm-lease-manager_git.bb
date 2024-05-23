@@ -9,8 +9,6 @@ SRC_URI = "git://gerrit.automotivelinux.org/gerrit/src/drm-lease-manager;protoco
 PV = "0.2+git${SRCPV}"
 SRCREV = "8ec09a65cd5b390b3d24bfb6c7a73993a3d98a56"
 
-S = "${WORKDIR}/git"
-
 inherit meson pkgconfig
 inherit systemd
 inherit ptest
@@ -19,7 +17,7 @@ DEPENDS = "libdrm libcheck fff tomlc99"
 
 do_install:append() {
     install -d ${D}/${systemd_unitdir}/system
-    install -m 0644 ${WORKDIR}/drm-lease-manager.service ${D}/${systemd_unitdir}/system
+    install -m 0644 ${UNPACKDIR}/drm-lease-manager.service ${D}/${systemd_unitdir}/system
     rm -rf ${D}/${localstatedir}
 }
 
