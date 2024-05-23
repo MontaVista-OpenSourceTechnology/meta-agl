@@ -27,10 +27,10 @@ SYSTEMD_SERVICE:${PN} = "${BPN}.service"
 
 do_install:append() {
     install -d ${D}${sysconfdir}/default
-    install -m 0644 ${WORKDIR}/kuksa-can-provider.default ${D}${sysconfdir}/default/
+    install -m 0644 ${UNPACKDIR}/kuksa-can-provider.default ${D}${sysconfdir}/default/
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${systemd_system_unitdir}
-        install -m 0644 ${WORKDIR}/kuksa-can-provider.service ${D}${systemd_system_unitdir}
+        install -m 0644 ${UNPACKDIR}/kuksa-can-provider.service ${D}${systemd_system_unitdir}
     fi
 
     # Install tweaked copy of the example configuration, the .ini file
