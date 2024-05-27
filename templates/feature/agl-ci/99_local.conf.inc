@@ -30,3 +30,7 @@ INHERIT += "buildstats-summary"
 #PRSERV_HOST = "${AGL_HOST_PRSERV}:8181"
 
 IMAGE_INSTALL:append = " curl"
+
+# disable lttng due to build errors
+LTTNGMODULES:forcevariable = ""
+LTTNGTOOLS:forcevariable = ""
