@@ -24,9 +24,11 @@ INHERIT += "buildstats-summary"
 #AGL_HOST_PRSERV ?= "10.30.72.18"
 #AGL_HOST_HASHSERV ?= "10.30.72.18"
 
+# r/w hashserv
 #BB_HASHSERVE = "${AGL_HOST_HASHSERV}:8383"
 #BB_SIGNATURE_HANDLER = "OEEquivHash"
 
+# r/w prserv
 #PRSERV_HOST = "${AGL_HOST_PRSERV}:8181"
 
 IMAGE_INSTALL:append = " curl"
