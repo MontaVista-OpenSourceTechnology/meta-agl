@@ -2,8 +2,6 @@ FILESEXTRAPATHS:append := ":${THISDIR}/weston"
 
 SRC_URI:append = " \
 		  file://0001-clients-Handle-missing-pointer_surface-is-there-s-no.patch \
-		  file://0001-backend-drm-don-t-leak-gem_handle_refcnt-in-drm_dest.patch \
-		  file://0002-backend-drm-always-create-gem_handle_refcnt-hash-tab.patch \
 "
 
 PACKAGECONFIG:append = " pipewire "
