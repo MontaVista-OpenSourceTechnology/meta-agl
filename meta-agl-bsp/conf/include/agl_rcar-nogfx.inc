@@ -58,14 +58,3 @@ BBMASK += "meta-renesas/meta-rcar-gen3/recipes-graphics/cogl/cogl-1.0_1.%.bbappe
 # packagegroup bbclass is inherited.  This can be removed when upstream
 # is fixed to add the required PACKAGE_ARCH = "${MACHINE_ARCH}".
 PACKAGE_ARCH:pn-packagegroup-multimedia-libs = "${MACHINE_ARCH}"
-
-# Mask out BSP layer gstreamer* 1.20.% bbappends for now, as the BSP
-# effectively is trying to patch in 1.20.3 source when upstream is at
-# 1.20.7, which breaks building at least gstreamer1.0-plugins-good, and
-# is an overall bad idea since it breaks downstream expectations with
-# respect to API versioning.  The whole directory is not commented out
-# because we still want the vspfilter plugin. This can be removed if the
-# use of explicit 1.20.3 recipes in meta-renesas scarthgap branch is
-# backported.
-BBMASK += "meta-renesas/meta-rcar-gen3/recipes-multimedia/gstreamer/gstreamer1.0-omx"
-BBMASK += "meta-renesas/meta-rcar-gen3/recipes-multimedia/gstreamer/gstreamer1.0-plugins-"
