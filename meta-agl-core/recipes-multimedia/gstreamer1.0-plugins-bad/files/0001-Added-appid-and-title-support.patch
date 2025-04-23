@@ -1,12 +1,15 @@
-From b8bbab864a1367ac47bcc0998b4c07d20020965a Mon Sep 17 00:00:00 2001
+From f3993a8c6f804f0a2da5114a503a5e92165219b3 Mon Sep 17 00:00:00 2001
 From: Marius Vlad <marius.vlad@collabora.com>
 Date: Thu, 5 Oct 2023 18:23:52 +0300
 Subject: [PATCH] ext/wayland: Add title/appid support
 
+Bug-AGL: SPEC-4870
+
 Upstream-Status: Pending
 
-Bug-AGL: SPEC-4870
 Signed-off-by: Marius Vlad <marius.vlad@collabora.com>
+(Refreshed for 1.26.0)
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
  ext/wayland/gstwaylandsink.c       | 41 +++++++++++++++++++++++++++++-
  ext/wayland/gstwaylandsink.h       |  2 ++
@@ -15,19 +18,19 @@ Signed-off-by: Marius Vlad <marius.vlad@collabora.com>
  4 files changed, 55 insertions(+), 3 deletions(-)
 
 diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
-index 2f116bf..69f4a00 100644
+index bd80121..48ff8a1 100644
 --- a/ext/wayland/gstwaylandsink.c
 +++ b/ext/wayland/gstwaylandsink.c
-@@ -61,6 +61,8 @@ enum
-   PROP_DISPLAY,
+@@ -63,6 +63,8 @@ enum
    PROP_FULLSCREEN,
    PROP_ROTATE_METHOD,
+   PROP_DRM_DEVICE,
 +  PROP_APP_ID,
 +  PROP_TITLE,
    PROP_LAST
  };
  
-@@ -177,6 +179,16 @@ gst_wayland_sink_class_init (GstWaylandSinkClass * klass)
+@@ -173,6 +175,16 @@ gst_wayland_sink_class_init (GstWaylandSinkClass * klass)
            GST_TYPE_VIDEO_ORIENTATION_METHOD, GST_VIDEO_ORIENTATION_IDENTITY,
            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
  
@@ -42,10 +45,10 @@ index 2f116bf..69f4a00 100644
 +          NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 +
   /**
-   * waylandsink:render-rectangle:
-   *
-@@ -266,6 +278,16 @@ gst_wayland_sink_get_property (GObject * object,
-       g_value_set_enum (value, self->current_rotate_method);
+    * waylandsink:drm-device:
+    *
+@@ -279,6 +291,16 @@ gst_wayland_sink_get_property (GObject * object,
+       g_value_set_string (value, self->drm_device);
        GST_OBJECT_UNLOCK (self);
        break;
 +    case PROP_APP_ID:
@@ -61,7 +64,7 @@ index 2f116bf..69f4a00 100644
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
        break;
-@@ -289,6 +311,16 @@ gst_wayland_sink_set_property (GObject * object,
+@@ -302,6 +324,16 @@ gst_wayland_sink_set_property (GObject * object,
        gst_wayland_sink_set_fullscreen (self, g_value_get_boolean (value));
        GST_OBJECT_UNLOCK (self);
        break;
@@ -78,7 +81,7 @@ index 2f116bf..69f4a00 100644
      case PROP_ROTATE_METHOD:
        gst_wayland_sink_set_rotate_method (self, g_value_get_enum (value),
            FALSE);
-@@ -310,12 +342,18 @@ gst_wayland_sink_finalize (GObject * object)
+@@ -329,6 +361,10 @@ gst_wayland_sink_finalize (GObject * object)
      gst_buffer_unref (self->last_buffer);
    if (self->display)
      g_object_unref (self->display);
@@ -89,42 +92,43 @@ index 2f116bf..69f4a00 100644
    if (self->window)
      g_object_unref (self->window);
    if (self->pool)
-     gst_object_unref (self->pool);
+@@ -338,6 +374,8 @@ gst_wayland_sink_finalize (GObject * object)
  
    g_free (self->display_name);
+   g_free (self->drm_device);
 +  g_free (self->title);
 +  g_free (self->app_id);
  
    g_mutex_clear (&self->display_lock);
    g_mutex_clear (&self->render_lock);
-@@ -761,7 +799,8 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
+@@ -859,7 +897,8 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
      if (!self->window) {
        /* if we were not provided a window, create one ourselves */
        self->window = gst_wl_window_new_toplevel (self->display,
 -          &self->video_info, self->fullscreen, &self->render_lock);
-+          &self->video_info, self->fullscreen, &self->app_id, &self->title,
++          &self->video_info, self->fullscreen, self->app_id, self->title,
 +          &self->render_lock);
        g_signal_connect_object (self->window, "closed",
            G_CALLBACK (on_window_closed), self, 0);
        gst_wl_window_set_rotate_method (self->window,
 diff --git a/ext/wayland/gstwaylandsink.h b/ext/wayland/gstwaylandsink.h
-index 3243d8c..6aee19d 100644
+index 5bbb10a..3a4a2ff 100644
 --- a/ext/wayland/gstwaylandsink.h
 +++ b/ext/wayland/gstwaylandsink.h
-@@ -58,6 +58,8 @@ struct _GstWaylandSink
-   gboolean fullscreen;
+@@ -59,6 +59,8 @@ struct _GstWaylandSink
+   GstCaps *caps;
  
    gchar *display_name;
 +  gchar *app_id;
 +  gchar *title;
  
-   gboolean redraw_pending;
    GMutex render_lock;
+   GstBuffer *last_buffer;
 diff --git a/gst-libs/gst/wayland/gstwlwindow.c b/gst-libs/gst/wayland/gstwlwindow.c
-index 6004993..de0a81e 100644
+index 2543d26..6636451 100644
 --- a/gst-libs/gst/wayland/gstwlwindow.c
 +++ b/gst-libs/gst/wayland/gstwlwindow.c
-@@ -270,7 +270,7 @@ gst_wl_window_ensure_fullscreen (GstWlWindow * self, gboolean fullscreen)
+@@ -295,7 +295,7 @@ gst_wl_window_ensure_fullscreen (GstWlWindow * self, gboolean fullscreen)
  
  GstWlWindow *
  gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
@@ -133,7 +137,7 @@ index 6004993..de0a81e 100644
  {
    GstWlWindow *self;
    GstWlWindowPrivate *priv;
-@@ -307,6 +307,16 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -337,6 +337,16 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
  
      gst_wl_window_ensure_fullscreen (self, fullscreen);
  
@@ -151,10 +155,10 @@ index 6004993..de0a81e 100644
      priv->configured = FALSE;
      wl_surface_commit (priv->area_surface);
 diff --git a/gst-libs/gst/wayland/gstwlwindow.h b/gst-libs/gst/wayland/gstwlwindow.h
-index 06c4001..e102052 100644
+index 4cd85ac..46138ce 100644
 --- a/gst-libs/gst/wayland/gstwlwindow.h
 +++ b/gst-libs/gst/wayland/gstwlwindow.h
-@@ -39,7 +39,8 @@ void gst_wl_window_ensure_fullscreen (GstWlWindow * self,
+@@ -41,7 +41,8 @@ void gst_wl_window_ensure_fullscreen (GstWlWindow * self,
  
  GST_WL_API
  GstWlWindow *gst_wl_window_new_toplevel (GstWlDisplay * display,
@@ -165,5 +169,5 @@ index 06c4001..e102052 100644
  GST_WL_API
  GstWlWindow *gst_wl_window_new_in_surface (GstWlDisplay * display,
 -- 
-2.35.1
+2.49.0
 
