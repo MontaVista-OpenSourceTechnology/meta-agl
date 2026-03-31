@@ -7,7 +7,7 @@ SRC_URI = "git://gerrit.automotivelinux.org/gerrit/src/drm-lease-manager;protoco
            "
 
 PV = "0.2+git${SRCPV}"
-SRCREV = "8ec09a65cd5b390b3d24bfb6c7a73993a3d98a56"
+SRCREV = "e8d3ddade5e1c29593a78d73eb1314fe349de434"
 
 S = "${WORKDIR}/git"
 
