@@ -85,6 +85,8 @@ vmail::958:
 opensaf::957:
 lldpd::956:
 postdrop::954:
+flatpak::926:
+rtkit::927:
 seat::199:
 weston::200:
 wayland::201:
