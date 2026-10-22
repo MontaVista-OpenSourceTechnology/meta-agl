@@ -39,6 +39,8 @@ games::60:
 shutdown::70:
 users::100:
 gpio::101:
+i2c::102:
+spi::103:
 nogroup::65534:
 cynagora::999:
 dhcp::998:
