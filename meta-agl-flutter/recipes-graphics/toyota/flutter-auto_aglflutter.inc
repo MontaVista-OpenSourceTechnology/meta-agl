@@ -19,3 +19,7 @@ PACKAGECONFIG:remove:raspberrypi5 = "${REMOVE_EGL}"
 
 PACKAGECONFIG:append:rk3588s = "${ADD_VULKAN}"
 PACKAGECONFIG:remove:rk3588s = "${REMOVE_EGL}"
+
+# flutter-surround-view shows its camera feeds as platform views, which
+# ivi-homescreen only supports with the FlutterCompositor path.
+PACKAGECONFIG:append:raspberrypi5 = " compositor"
