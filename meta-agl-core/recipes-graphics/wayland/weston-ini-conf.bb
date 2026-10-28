@@ -18,7 +18,6 @@ SRC_URI = " \
 	file://virtual-180.cfg \
 	file://virtual-270.cfg \
 	file://grpc-proxy.cfg \
-	file://shell-flutter-auto.cfg \
 "
 
 S = "${UNPACKDIR}"
@@ -34,7 +33,7 @@ WESTON_DISPLAYS ?= "hdmi-a-1-90"
 # Configuration fragments to use in weston.ini.*
 # Note that some may be replaced/removed when building the landscape
 # configuration.
-WESTON_FRAGMENTS_BASE = "core shell shell-flutter-auto"
+WESTON_FRAGMENTS_BASE = "core shell"
 WESTON_FRAGMENTS = "${WESTON_FRAGMENTS_BASE} ${WESTON_DISPLAYS}"
 
 # On-target weston.ini directory
@@ -51,8 +50,6 @@ do_compile() {
     sed -i -e '$ d' ${WORKDIR}/weston.ini.default
 
     cp ${WORKDIR}/weston.ini.default ${WORKDIR}/weston.ini.default-no-activate
-    sed -E 's|(flutter-embedder-quirk)=(.*)|\1=true|' ${WORKDIR}/weston.ini.default \
-        > ${WORKDIR}/weston.ini.flutter
 
     # Do it again, but filter fragments to configure for landscape
     # and a corresponding landscape-inverted that is 180 degrees
@@ -72,19 +69,12 @@ do_compile() {
             INVF="virtual-180"
         fi
         cat ${UNPACKDIR}/${F}.cfg >> ${WORKDIR}/weston.ini.landscape
-        cat ${UNPACKDIR}/${INVF}.cfg >> ${WORKDIR}/weston.ini.landscape-inverted
         echo >> ${WORKDIR}/weston.ini.landscape
-        sed -E 's|(flutter-embedder-quirk)=(.*)|\1=true|' ${WORKDIR}/weston.ini.landscape \
-            > ${WORKDIR}/weston.ini.landscape-flutter
-
+        cat ${UNPACKDIR}/${INVF}.cfg >> ${WORKDIR}/weston.ini.landscape-inverted
         echo >> ${WORKDIR}/weston.ini.landscape-inverted
-        sed -E 's|(flutter-embedder-quirk)=(.*)|\1=true|' ${WORKDIR}/weston.ini.landscape-inverted \
-            > ${WORKDIR}/weston.ini.landscape-inverted-flutter
     done
     sed -i -e '$ d' ${WORKDIR}/weston.ini.landscape
-    sed -i -e '$ d' ${WORKDIR}/weston.ini.landscape-flutter
     sed -i -e '$ d' ${WORKDIR}/weston.ini.landscape-inverted
-    sed -i -e '$ d' ${WORKDIR}/weston.ini.landscape-inverted-flutter
 
     cat ${WORKDIR}/weston.ini.landscape > ${WORKDIR}/weston.ini.landscape-no-activate
 }
@@ -93,12 +83,9 @@ do_install:append() {
     install -d ${D}${weston_ini_dir}
     install -m 0644 ${WORKDIR}/weston.ini.default ${D}${weston_ini_dir}/
     install -m 0644 ${WORKDIR}/weston.ini.default-no-activate ${D}${weston_ini_dir}/
-    install -m 0644 ${WORKDIR}/weston.ini.flutter ${D}${weston_ini_dir}/
-    install -m 0644 ${WORKDIR}/weston.ini.landscape-no-activate ${D}${weston_ini_dir}/
     install -m 0644 ${WORKDIR}/weston.ini.landscape ${D}${weston_ini_dir}/
-    install -m 0644 ${WORKDIR}/weston.ini.landscape-flutter ${D}${weston_ini_dir}/
+    install -m 0644 ${WORKDIR}/weston.ini.landscape-no-activate ${D}${weston_ini_dir}/
     install -m 0644 ${WORKDIR}/weston.ini.landscape-inverted ${D}${weston_ini_dir}/
-    install -m 0644 ${WORKDIR}/weston.ini.landscape-inverted-flutter ${D}${weston_ini_dir}/
 }
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -125,15 +112,6 @@ ALTERNATIVE:${PN}-landscape = "weston.ini"
 ALTERNATIVE_TARGET_${PN}-landscape = "${weston_ini_dir}/weston.ini.landscape"
 ALTERNATIVE_PRIORITY_${PN}-landscape = "20"
 
-# landscape-flutter
-
-PACKAGE_BEFORE_PN += "${PN}-landscape-flutter"
-FILES:${PN}-landscape-flutter = "${weston_ini_dir}/weston.ini.landscape-flutter"
-RPROVIDES:${PN}-landscape-flutter = "weston-ini"
-ALTERNATIVE:${PN}-landscape-flutter = "weston.ini"
-ALTERNATIVE_TARGET_${PN}-landscape-flutter = "${weston_ini_dir}/weston.ini.landscape-flutter"
-ALTERNATIVE_PRIORITY_${PN}-landscape-flutter = "21"
-
 # landscape-inverted
 
 PACKAGE_BEFORE_PN += "${PN}-landscape-inverted"
@@ -142,15 +120,6 @@ RPROVIDES:${PN}-landscape-inverted = "weston-ini"
 ALTERNATIVE:${PN}-landscape-inverted = "weston.ini"
 ALTERNATIVE_TARGET_${PN}-landscape-inverted = "${weston_ini_dir}/weston.ini.landscape-inverted"
 ALTERNATIVE_PRIORITY_${PN}-landscape-inverted = "25"
-
-# landscape-inverted-flutter
-
-PACKAGE_BEFORE_PN += "${PN}-landscape-inverted-flutter"
-FILES:${PN}-landscape-inverted-flutter = "${weston_ini_dir}/weston.ini.landscape-inverted-flutter"
-RPROVIDES:${PN}-landscape-inverted-flutter = "weston-ini"
-ALTERNATIVE:${PN}-landscape-inverted-flutter = "weston.ini"
-ALTERNATIVE_TARGET_${PN}-landscape-inverted-flutter = "${weston_ini_dir}/weston.ini.landscape-inverted-flutter"
-ALTERNATIVE_PRIORITY_${PN}-landscape-inverted-flutter = "26"
 
 # no-activate, no activation by default
 PACKAGE_BEFORE_PN += "${PN}-no-activate"
@@ -167,13 +136,6 @@ RPROVIDES:${PN}-landscape-no-activate = "weston-ini"
 ALTERNATIVE:${PN}-landscape-no-activate = "weston.ini"
 ALTERNATIVE_TARGET_${PN}-landscape-no-activate = "${weston_ini_dir}/weston.ini.landscape-no-activate"
 ALTERNATIVE_PRIORITY_${PN}-landscape-no-activate = "27"
-
-PACKAGE_BEFORE_PN += "${PN}-flutter"
-FILES:${PN}-flutter = "${weston_ini_dir}/weston.ini.flutter"
-RPROVIDES:${PN}-flutter = "weston-ini"
-ALTERNATIVE:${PN}-flutter = "weston.ini"
-ALTERNATIVE_TARGET_${PN}-flutter = "${weston_ini_dir}/weston.ini.flutter"
-ALTERNATIVE_PRIORITY_${PN}-flutter = "31"
 
 # This is a settings-only package, we do not need a development package
 # (and its fixed dependency to ${PN} being installed)
