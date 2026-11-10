@@ -36,7 +36,6 @@ KERNEL_CONFIG_FRAGMENTS ?= "${@' '.join(['${UNPACKDIR}/' + x for x in d.getVar('
 
 # Extra configuration options for the AGL kernel
 AGL_KCONFIG_FRAGMENTS += " \
-    can-bus.cfg \
     fanotify.cfg \
     overlayfs.cfg \
     audit.cfg \
@@ -45,15 +44,38 @@ AGL_KCONFIG_FRAGMENTS += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd-sandbox.cfg', '', d)} \
 "
 
-# Base ALSA support and other sound related configuration
-AGL_KCONFIG_FRAGMENTS += "sound.cfg"
+# Base CAN and ALSA support
+AGL_KCONFIG_FRAGMENTS_HARDWARE ?= " \
+    input.cfg \
+    can-bus.cfg \
+    sound.cfg \
+"
+AGL_KCONFIG_FRAGMENTS += "${AGL_KCONFIG_FRAGMENTS_HARDWARE}"
 
 # Enable basic perf tracing support
 AGL_KCONFIG_FRAGMENTS += "${@bb.utils.contains('DISTRO_FEATURES', 'agl-devel', 'tracing-basic.cfg', '', d)}"
 
 # Enable KVM support if required
-AGL_KCONFIG_FRAGMENTS_KVM = "kvm-host.cfg kvm-host-net.cfg virtio-vhost.cfg"
+AGL_KCONFIG_FRAGMENTS_KVM = " \
+    kvm-host.cfg \
+    virt-host-net.cfg \
+    virtio-vhost.cfg \
+"
 AGL_KCONFIG_FRAGMENTS += "${@bb.utils.contains('AGL_FEATURES', 'agl-kvm', '${AGL_KCONFIG_FRAGMENTS_KVM}', '', d)}"
+
+# Enable VirtIO support if required
+AGL_KCONFIG_FRAGMENTS_VIRTIO_MACHINE = ""
+AGL_KCONFIG_FRAGMENTS_VIRTIO_MACHINE:aarch64 = "virtio-aarch64.cfg"
+AGL_KCONFIG_FRAGMENTS_VIRTIO_GUEST = " \
+    ${AGL_KCONFIG_FRAGMENTS_VIRTIO_MACHINE} \
+    virtio-drm.cfg \
+    virtio-pci.cfg \
+    virtio-scmi.cfg \
+    sound-hda.cfg \
+    virtio-snd.cfg \
+"
+AGL_KCONFIG_FRAGMENTS += "${@bb.utils.contains('AGL_FEATURES', 'agl-virtio-guest', '${AGL_KCONFIG_FRAGMENTS_VIRTIO_GUEST}', '', d)}"
+
 
 #
 # Feature override and qemu specific appends:
