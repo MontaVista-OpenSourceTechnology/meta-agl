@@ -1,5 +1,19 @@
-[view]
-window_type = "BG"
+[global]
+disable_cursor = true
+#debug_backend = false
+
+[[view]]
 width = 1080
 height = 1920
 fullscreen = true
+
+  [view.shell]
+  type = 'agl'                # auto|xdg|agl|ivi|simple
+
+    [view.shell.window]
+    type = 'BG'               # BG|PANEL_TOP|PANEL_BOTTOM|PANEL_LEFT|PANEL_RIGHT|NORMAL
+
+  # Renderer backend. The [view.backend.drm] knobs apply only to the DRM/KMS
+  # backends and are ignored by the Wayland and software backends.
+  #[view.backend]
+  #type = 'wayland-egl'        # wayland-egl|wayland-vulkan|drm-kms-egl|drm-kms-vulkan|software
