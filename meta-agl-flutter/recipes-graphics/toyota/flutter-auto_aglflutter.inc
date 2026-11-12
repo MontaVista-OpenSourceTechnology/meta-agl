@@ -1,7 +1,3 @@
-# Temporarily override to pick up some fixes that meta-flutter has not
-# gotten yet (as of 2026/10/21).
-HOMESCREEN_COMMIT = "05fb91a0d0e09cd0fb099299dcf2202e1a4d21e4"
-
 ADD_VULKAN = "${@bb.utils.contains("DISTRO_FEATURES", "vulkan", " backend-wayland-vulkan", "", d)}"
 REMOVE_EGL = "${@bb.utils.contains("DISTRO_FEATURES", "vulkan", "backend-wayland-egl egl-3d egl-transparency egl-multisample", "", d)}"
 
